@@ -1,0 +1,66 @@
+#Comparaison des erreurs pour différentes méthodes d'integration numerique
+
+clc; clear all
+
+#Calcul de la valeur théorique de l'intégrale exp(x) entre 0 et 10 ici:
+
+theorique = exp(10)-1;
+
+######Definition des fonctions############
+
+#RECT
+
+function I=frectd2(x,y)
+  N=length(x) ; h=x(2)-x(1) ;
+  I= h *  sum( y(1:N-1) )  ;
+end
+
+ #SIMPSON
+function I=fsimp2(x,y)
+  N=length(x) ; h=x(2)-x(1) ;
+  I=(h/3) * (  y(1)+y(N) + 4*sum( y(2:2:N-1) )  + 2*sum( y(3:2:N-2) )   );
+end
+
+#TRAPEZE
+function I=ftrap2(x,y)
+  N=length(x) ; h=x(2)-x(1) ;
+  I=(h/2) * (  y(1)+y(N) + 2*sum( y(2:N-1) )   );
+end
+
+
+#Création de mes vecteurs d'abscisses et ordonnées pour h et les erreurs
+val_h = [];
+ls_errRD = [];
+ls_errSI = [];
+ls_errTZ = [];
+
+#Je calcule maintenant pour plusieurs N impairs
+
+for N = 3:100:10001 ;
+  
+  #Paramètres de ma fonction exponentielle 
+  X = linspace(0,10,N);
+  Y = exp(X);
+  
+  #Calcul des erreurs relatives en %, en appelant mes fonctions 
+  #Je remplis mes vecteurs à chaque itération
+  
+  ls_errRD(end+1) = (abs(frectd(X,Y)-theorique)./theorique)*100;
+  ls_errSI(end+1)= (abs(fsimps(X,Y)-theorique)./theorique)*100;
+  ls_errTZ(end+1)= (abs(ftrapz(X,Y)-theorique)./theorique)*100;
+  
+  #Remplissage de mon vecteur pour le pas h 
+  val_h(end+1) = (1/N);
+  
+endfor
+
+
+#Mise en forme du tracé des courbes en échelle log-log
+#Je trace mes vecteurs ERREURS en fonction du vecteur PAS H
+
+loglog(val_h,ls_errRD,'b',val_h,ls_errSI,'g',val_h,ls_errTZ,'r')
+title('Erreurs Relatives pour différentes méthodes d` intégration numérique');
+xlabel('Valeur du pas h');
+ylabel('Erreur Relative (en %)');
+legend('Rectangle','Simpson','Trapèze','Location','southeast');
+grid;
