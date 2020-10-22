@@ -1,0 +1,23 @@
+
+valth = exp(20)-1;
+
+#Création de mes vecteurs d'abscisses et ordonnées pour h et les erreurs
+val_h = [];
+rect = [];
+simpson = [];
+trapeze = [];
+
+#Je prends des N impairs
+
+for N = 11:10:5001 ;
+  
+  X = linspace(0,20,N);
+  Y = exp(X);
+  
+  rect(end+1) = (abs(frectd(X,Y)-valth)./valth)*100;
+  simpson(end+1)= (abs(fsimps(X,Y)-valth)./valth)*100;
+  trapeze(end+1)= (abs(ftrapz(X,Y)-valth)./valth)*100;
+  val_h(end+1) = (1/N);
+  
+endfor
+loglog(val_h,rect,val_h,simpson,val_h,trapeze)
