@@ -45,9 +45,9 @@ for N = 3:100:10001 ;
   #Calcul des erreurs relatives en %, en appelant mes fonctions 
   #Je remplis mes vecteurs à chaque itération
   
-  ls_errRD(end+1) = (abs(frectd(X,Y)-theorique)./theorique)*100;
-  ls_errSI(end+1)= (abs(fsimps(X,Y)-theorique)./theorique)*100;
-  ls_errTZ(end+1)= (abs(ftrapz(X,Y)-theorique)./theorique)*100;
+  ls_errRD(end+1) = (abs(frectd2(X,Y)-theorique)./theorique)*100;
+  ls_errSI(end+1)= (abs(fsimp2(X,Y)-theorique)./theorique)*100;
+  ls_errTZ(end+1)= (abs(ftrap2(X,Y)-theorique)./theorique)*100;
   
   #Remplissage de mon vecteur pour le pas h 
   val_h(end+1) = (1/N);
