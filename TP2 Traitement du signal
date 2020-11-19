@@ -1,0 +1,101 @@
+clear all; clc; close all; 
+
+## 1. Echantillonnage
+pkg load signal
+
+#[Y, Fe] = audioread ("signal0.wav");
+#info = audioinfo("signal0.wav");
+#S = 1 ; #Plus S est petit, plus la qualité est bonne
+
+#Fse = Fe/S; # S<2 pour respecter le critère de Shannon
+
+#PlaySignal(Y,Fe,S)
+
+#[Xhat,f] = tfsc2(Y,Fe);
+
+#figure 1
+#plot(f, abs(Xhat)) # Affiche la transformée de Fourier du signal
+#title('Représentation fréquentielle du signal','FontSize', 24);
+#xlabel('f','Fontsize',15);
+#ylabel('X(f)','Fontsize',15);
+
+## 2. Quantification
+
+#load SignalQuantif.mat 
+
+#RSB = [];
+
+#for N = 1:16 ; # perte très importante de la qualité du signal pour N petit
+  #xq = quanti(x,N);
+  #Ps = mean(x.^2);
+  #Pb = mean((x-xq).^2);
+  #RSB(N) = 10*log10(Ps/Pb);
+#end
+
+#figure 2
+#plot([1:16],RSB)
+#title('RSB en fonction de N bits','FontSize', 24);
+#xlabel('Nombre de bits','Fontsize',15);
+#ylabel('Rapport signal sur bruit (en dB)','Fontsize',15);
+
+## 3. Echantillonnage et reconstruction
+
+load SignalReconst.mat
+
+t= 1:256;
+
+#figure 3
+#plot(t,x)
+#title('Représentation temporelle de SignalReconst.mat','FontSize', 24);
+#xlabel('temps','Fontsize',15);
+#ylabel('x(t)','Fontsize',15);
+
+[Xhat,f] = tfsc2(x,1);
+
+#figure 4
+#plot(f, abs(Xhat)) # Affiche la transformée de Fourier du signal
+#title('Représentation fréquentielle de SignalReconst.mat','FontSize', 24);
+#xlabel('f','Fontsize',15);
+#ylabel('X(f)','Fontsize',15);
+
+y=zeros(1,256);
+i=1;
+S_2 = 2; #Plus S augmente et moins l'échantillonnage sera précis
+
+while i<256               #ou y(1:S:end)=x(1:S:end);
+  y(i) = x(i);
+  i+=S_2;
+endwhile
+
+
+figure 5 
+plot(t,x,'b',t,y,'m')
+title('Représentation temporelle de l''echantillonage de SignalReconst.mat','FontSize', 15);
+xlabel('t','Fontsize',15);
+ylabel('y(t)','Fontsize',15);
+
+[Yhat,f] = tfsc2(y,1);
+
+figure 6 
+plot(f, abs(Yhat))
+title('Représentation fréquentielle de l''echantillonage de SignalReconst.mat','FontSize', 15);
+xlabel('f','Fontsize',15);
+ylabel('Y(f)','Fontsize',15);
+
+#Le filtre idéal pour un sous echant. de facteur S_2 est:
+
+#ici fe normalisé vaut 1
+fe = 1;
+
+rep_filtre = (f<=fe/S_2)&(f>=-fe/S_2); 
+
+Yfiltre = Yhat.*rep_filtre ; #Multiplication en frequentiel 
+
+#Le signal temporel s'obtient via TF inverse
+y_reconst = tfsc2_inv(Yfiltre); 
+
+figure 7
+plot(t, y_reconst)
+title('Représentation temporelle reconstituée de l''echantillonage de SignalReconst.mat','FontSize', 15);
+xlabel('t','Fontsize',15);
+ylabel('y_reconstitué(t)','Fontsize',15);
