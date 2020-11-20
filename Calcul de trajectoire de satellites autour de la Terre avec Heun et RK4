@@ -1,0 +1,85 @@
+close all;clear all; clc;
+
+%%%%%%%%%%%%%%%%%%%%%% DEFINITION DES CONSTANTES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+global MtG
+global h
+
+t0=0;
+tf=24*3600*365;   % 365 jours
+N=10000;          % Nombre de points
+h=(tf-t0)/(N-1);  % Pas du calcul
+G = 6.67E-11 ;    % Constante G
+Mt= 5.9736E24 ;   % Masse de la Terre
+MtG = Mt*G;       
+v0 = 3071 ;       % Vitesse Initiale premier cas
+v1 = v0*1.2 ;     % Vitesse Initiale second cas
+x0 = 4.223E7 ;    % Distance Terre-Satellite initiale
+Ms=2000;          % Masse du satellite etudie
+t=(t0:h:tf);      % Plages de temps
+
+
+%%% CHOIX DE LA METHODE PAR L'UTILISATEUR %%%
+
+j = input("Methode de resolution : \n 1 = Heun \n 2 = RK4 \n"); % Demande la méthode de résolution
+
+%%%%%%%%%%%%%%%%%%%%%%%TRAJECTOIRE POUR V0%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+CI = [0,v0,x0,0]; % Condition Initiales pour v = v0
+
+if j==1
+  [y] = [y] = FHeun('ftrajectoire',t,CI);
+elseif j==2
+  [y] = FRK4('ftrajectoire',t,CI);
+end
+
+hold on
+figure(1) % Cree l'ecran 1, le hold on nous permet de "stocker" la courbe
+plot(y(:,3),y(:,4)); 
+
+
+%%%%%%%%%%%%%%%%%% CALCUL DE L'ENERGIE POUR V0 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+l=length(y(:,1));
+
+for i=1:l
+ 
+  E0(i) =  0.5*(y(i,1).^2+y(i,2).^2)  -  MtG / ( (y(i,3).^2+y(i,4).^2).^0.5 );
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%% TRAJECTOIRE POUR V1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+CI = [0,v1,x0,0]; % Condition Initiales pour v = v1
+
+t=(t0:h:tf);
+
+if j==1
+  [y] = [y] = FHeun('ftrajectoire',t,CI);
+elseif j==2
+  [y] = FRK4('ftrajectoire',t,CI);
+end
+
+figure(1)
+plot(y(:,3),y(:,4));
+title('Trajectoire orbitale');
+xlabel('x');
+ylabel('y');
+legend('Traj. pour V0','Traj. pour V1','Location','southeast');
+hold off % Permet d'afficher les courbes de vo et v1 dans la meme fenetre
+
+%%%%%%%%%%%%%%%%%%%%%%%%% CALCUL DE L'ENERGIE POUR V1 %%%%%%%%%%%%%%%%%%%%%%%%%%
+l=length(y(:,1));
+
+for i=1:l
+  
+  E1(i) = 0.5*(y(i,1).^2+y(i,2).^2)  -  MtG / ( (y(i,3).^2+y(i,4).^2).^0.5 );
+  
+end
+
+figure(2)
+plot(t,E0,t,E1) % Affiche l'energie pour v0 et pour v1
+title('Evolution temporelle de l''énergie mécanique');
+xlabel('t');
+ylabel('Em');
+legend('E0','E1','Location','southeast');
