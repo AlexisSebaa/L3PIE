@@ -1,0 +1,16 @@
+function [Y] = FHeun (Fct,t,CI)
+
+n1 = length(t) ;
+n2 = length(CI) ;
+h = t(2)-t(1) ;
+Y = zeros(n1,n2) ;
+Y(1,:) = CI ;
+  
+  for i=1:n1-1
+    k = Y(i,:) + h*feval(Fct, t(i)  , Y(i,:));
+    Y(i+1,:) = Y(i,:) + (h*0.5)*((feval(Fct, t(i)  , Y(i,:))+feval(Fct, t(i+1)  , k)));
+  end
+
+end
+
+%Script Methode de resolution Heun
