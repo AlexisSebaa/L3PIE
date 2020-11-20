@@ -1,0 +1,11 @@
+function [dydt] = ftrajectoire (t,y)
+  
+  global MtG
+  
+  traj = MtG * (  y(3)^2 + y(4)^2  )^(-1.5) ;
+  dydt = [ -y(3)*traj ,  -y(4)*traj  , y(1) , y(2) ];
+
+endfunction
+
+
+% Script E.D. trajectoire satellite
