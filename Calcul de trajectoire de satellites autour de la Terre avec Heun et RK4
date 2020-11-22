@@ -1,6 +1,6 @@
 close all;clear all; clc;
 
-%%%%%%%%%%%%%%%%%%%%%% DEFINITION DES CONSTANTES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DEFINITION DES CONSTANTES %%%
 
 global MtG
 global h
@@ -19,26 +19,28 @@ Ms=2000;          % Masse du satellite etudie
 t=(t0:h:tf);      % Plages de temps
 
 
-%%% CHOIX DE LA METHODE PAR L'UTILISATEUR %%%
-
-j = input("Methode de resolution : \n 1 = Heun \n 2 = RK4 \n"); % Demande la méthode de résolution
-
-%%%%%%%%%%%%%%%%%%%%%%%TRAJECTOIRE POUR V0%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Trajectoire avec v = v0
 
 CI = [0,v0,x0,0]; % Condition Initiales pour v = v0
 
+j = input("Methode de resolution à choisir : \n 1 = Euler \n 2 = Heun \n 3 = Runge et Kutta 4 \n \n Tapez 1, 2 ou 3 : "); % Demande la méthode de résolution
+
+
+%%%%%%%%%%%%%%%%%%%%%%%TRAJECTOIRE POUR V0%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if j==1
-  [y] = [y] = FHeun('ftrajectoire',t,CI);
+  [y] = FEuler('ftrajectoire',t,CI);
 elseif j==2
+  [y] = FHeun('ftrajectoire',t,CI);
+elseif j==3
   [y] = FRK4('ftrajectoire',t,CI);
 end
 
 hold on
-figure(1) % Cree l'ecran 1, le hold on nous permet de "stocker" la courbe
-plot(y(:,3),y(:,4)); 
+figure(1) % Cree l'ecran 1
+plot(y(:,3),y(:,4)); % Dessine la trajectoire orbitale
 
 
-%%%%%%%%%%%%%%%%%% CALCUL DE L'ENERGIE POUR V0 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%CALCUL DE L'ENERGIE POUR V0%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 l=length(y(:,1));
 
@@ -48,15 +50,17 @@ for i=1:l
 
 end
 
-%%%%%%%%%%%%%%%%%%%%%% TRAJECTOIRE POUR V1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%TRAJECTOIRE POUR V1%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 CI = [0,v1,x0,0]; % Condition Initiales pour v = v1
 
 t=(t0:h:tf);
 
 if j==1
-  [y] = [y] = FHeun('ftrajectoire',t,CI);
+  [y] = FEuler('ftrajectoire',t,CI);
 elseif j==2
+  [y] = FHeun('ftrajectoire',t,CI);
+elseif j==3
   [y] = FRK4('ftrajectoire',t,CI);
 end
 
@@ -66,9 +70,9 @@ title('Trajectoire orbitale');
 xlabel('x');
 ylabel('y');
 legend('Traj. pour V0','Traj. pour V1','Location','southeast');
-hold off % Permet d'afficher les courbes de vo et v1 dans la meme fenetre
+hold off 
 
-%%%%%%%%%%%%%%%%%%%%%%%%% CALCUL DE L'ENERGIE POUR V1 %%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%CALCUL DE L'ENERGIE POUR V1%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 l=length(y(:,1));
 
 for i=1:l
