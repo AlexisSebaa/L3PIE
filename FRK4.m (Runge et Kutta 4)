@@ -1,19 +1,17 @@
-function [Y] = FRK4(fonct,t,CI)
+function [Y] = FRK4(f,t,CI)
 
-n1 = length(t) ;
-n2 = length(CI) ;
-h = t(2)-t(1) ;
-Y = zeros(n1,n2) ;
+N = length(t) ;
+Ne = length(CI) ;
+h = (t(N)-t(1))/(N-1) ;
+Y = zeros(N,Ne) ;
 Y(1,:) = CI ;
 
-%Ne = 1 ; %Y(:, 1) = 1 ;
 
-
-  for i = 1: n1-1
-    k1 = h*feval(fonct,t(i), Y(i,:)) ;
-    k2 = h*feval(fonct,t(i+1) + h*0.5,Y(i,:) + k1*0.5) ;
-    k3 = h*feval(fonct,t(i+1) + h*0.5,Y(i,:) + k2*0.5) ;
-    k4 = h*feval(fonct,t(i+1) + h,Y(i,:) + k3) ;
+  for i = 1: N-1
+    k1 = h*feval(f,t(i), Y(i,:)) ;
+    k2 = h*feval(f,t(i+1) + h*0.5,Y(i,:) + k1*0.5) ;
+    k3 = h*feval(f,t(i+1) + h*0.5,Y(i,:) + k2*0.5) ;
+    k4 = h*feval(f,t(i+1) + h,Y(i,:) + k3) ;
     Y(i+1,:) = Y(i,:) + (1/6)*(k1 + 2*k2 + 2*k3 + k4) ;
   end
 end
