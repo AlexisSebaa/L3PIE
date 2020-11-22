@@ -15,18 +15,19 @@ MtG = Mt*G;
 v0 = 3071 ;       % Vitesse Initiale premier cas
 v1 = v0*1.2 ;     % Vitesse Initiale second cas
 x0 = 4.223E7 ;    % Distance Terre-Satellite initiale
-Ms=2000;          % Masse du satellite etudie
+m=1;              % Masse du satellite etudie
 t=(t0:h:tf);      % Plages de temps
 
 
 %%% Trajectoire avec v = v0
 
-CI = [0,v0,x0,0]; % Condition Initiales pour v = v0
-
 j = input("Methode de resolution à choisir : \n 1 = Euler \n 2 = Heun \n 3 = Runge et Kutta 4 \n \n Tapez 1, 2 ou 3 : "); % Demande la méthode de résolution
 
 
 %%%%%%%%%%%%%%%%%%%%%%%TRAJECTOIRE POUR V0%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+CI = [0,v0,x0,0]; % Condition Initiales pour v = v0
+
 if j==1
   [y] = FEuler('ftrajectoire',t,CI);
 elseif j==2
@@ -46,7 +47,7 @@ l=length(y(:,1));
 
 for i=1:l
  
-  E0(i) =  0.5*(y(i,1).^2+y(i,2).^2)  -  MtG / ( (y(i,3).^2+y(i,4).^2).^0.5 );
+  E0(i) =  0.5*m*(y(i,1).^2+y(i,2).^2)  -  (m*MtG) / ( (y(i,3).^2+y(i,4).^2).^0.5 );
 
 end
 
@@ -77,7 +78,7 @@ l=length(y(:,1));
 
 for i=1:l
   
-  E1(i) = 0.5*(y(i,1).^2+y(i,2).^2)  -  MtG / ( (y(i,3).^2+y(i,4).^2).^0.5 );
+  E1(i) = 0.5*m*(y(i,1).^2+y(i,2).^2)  -  (m*MtG) / ( (y(i,3).^2+y(i,4).^2).^0.5 );
   
 end
 
