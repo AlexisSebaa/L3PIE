@@ -17,7 +17,7 @@ n = length(Y);
 f = [0:(n-1)]*(fe/n) ;
 
 f0 = 38000 ;
-fc = 15000 ; #f1
+fc = 15000 ; #f1 d'ailleurs il y a une coquille dans le CR du TP4
 
 
 ##figure 1 
