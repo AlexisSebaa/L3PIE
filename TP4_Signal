@@ -1,0 +1,103 @@
+clear all; clc; close all; 
+
+pkg load signal ;
+load y.mat ;
+
+fe = 132300;
+Te = 1/fe;
+tmax= length(y);
+t= [0:tmax-1]*Te ;
+
+Y = abs(fft(y));
+
+n = length(Y);
+f = [0:(n-1)]*(fe/n) ;
+
+f0 = 38000 ;
+fc = 15000 ; #f1
+
+
+figure 1 
+plot(f,Y)
+title('Représentation fréquentielle de y.mat','FontSize', 16);
+xlabel('f','Fontsize',15);
+ylabel('Y(f)','Fontsize',15);
+
+Wn = fc/(fe/2);
+
+ordre = 500;
+
+P = (ordre-1)/2;
+retard = P*Te
+
+B = fir1(ordre,Wn,'low');
+
+[H,F] = freqz (B,1,4096,fe);
+
+figure 2
+plot(F,20*log10(H));
+title('Représentation du filtre pour extraire x1','FontSize', 16);
+xlabel('f','Fontsize',15);
+ylabel('Gain du filtre (en dB)','Fontsize',15);
+
+
+x1 = filter(B,1,y);
+
+figure 3
+plot(t,x1)
+title('Signal filtré','FontSize', 16);
+xlabel('t','Fontsize',15);
+ylabel('x1(t)','Fontsize',15);
+
+##sound(x1./abs(max(x1)),fe)
+
+
+X1 = abs(fft(x1));
+
+figure 4
+plot(f,X1)
+title('Représentation fréquetielle du signal filtré','FontSize', 16);
+xlabel('f','Fontsize',15);
+ylabel('X1(f)','Fontsize',15);
+
+
+
+v = y.*cos(2*pi*f0*t);
+V = abs(fft(v)); 
+
+x2 = filter(B,1,v);
+X2 = abs(fft(x2)) ;
+
+figure 5
+plot(f,V)
+title('Représentation fréquentielle du signal non filtré','FontSize', 16);
+xlabel('f','Fontsize',15);
+ylabel('V(f)','Fontsize',15);
+
+figure 6 
+plot(f,X2)
+title('Représentation fréquentielle du signal filtré','FontSize', 16);
+xlabel('f','Fontsize',15);
+ylabel('X2(f)','Fontsize',15);
+
+##sound(x2./abs(max(x2)),fe)
+
+
+g =(x1+x2)./2;
+
+d =(x1-x2)./2;
+
+figure 7
+plot(t,(x1-x2),t,(x1+x2))
+
+sound(g./abs(max(g)),fe)
+
+##sound(d./abs(max(d)),fe)
+
+ ##en prenant 2 filtres d'ordres différents
+
+ordre2 = 301
+B2 = fir1(ordre2,Wn,'low');
+x2 = filter(B2,1,v);
+
+##sound(x2./abs(max(x2)),fe)
