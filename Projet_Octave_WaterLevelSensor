@@ -1,69 +1,73 @@
-clc; close all; clear all; 
+################################################################################
+###################                                     ########################
+################### PROJET CAPTEUR DE NIVEAU DE LIQUIDE ########################
+###################                                     ########################
+################################################################################
 
+clc; close all; clear all; 
 pkg load statistics
 
-## PROJET CAPTEUR DE NIVEAU DE LIQUIDE 
-
-
-##Condensateur (Plan-Plan)
+###################### PARAMETRES DU CONDENSATEUR PLAN ######################### 
 
 e0=8.854187e-12; ##[F.m-1]
 er_air= 1.0005;## air sec à 20 degrés Celsius
-er_eau=80.1; ## eau à 20 degrés Celsius
+
 h=20e-2;## hauteur de la plaque en [m]
 l=4e-2;## longueur de la plaque en [m]
 A=h*l; ##Surface d'une plaque en [m2]
 d=0.5e-2;## Distance entre les deux électrodes en [m]
 
-##Parametres de l'eau qui vont varier
+x_min = 10e-2; #Hauteur de l'eau dans la cuve quand le condensateur est plein d'air
 
-x_min = 10e-2; #Hauteur de l'eau quand le cond. est plein d'air
-T = input("Température de l'eau : "); ##Entrer la température ambiante
+############# INFLUENCE DE LA TEMPÉRATURE SUR LA PERMITTIVITÉ ##################
 
-##Permittivité de l'eau en fonction de la température
+T = input("Température de l'eau : "); ##Entrer la température ambiante en degré Celsius
+
+## Données expérimentales
 
 Temp = [0,0.1,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,99,100]; ##Tableau des températures de référence
 perm = [87.74,87.7,85.763,83.832,81.946,80.103,78.304,76.546,74.828,73.151,71.512,69.91,68.345,66.815,65.319,63.857,62.427,61.027,59.659,58.319,57.007,55.977,55.720]; ##Permittivité Relative de l'eau de référence
 
-p = polyfit(Temp,perm,2)## Coeff approx eq. degré 2
-f = polyval(p,Temp);
+p = polyfit(Temp,perm,2);## Coefficients de la fonction er_eau(T) (Polynôme du 2nd degré)
+f = polyval(p,Temp);    ## Mise sous forme de fonction
 
-#Régression du 2nd degré d'après les données
 
-absc = 0:1:100;
-ordo = p(1).*absc.**2+p(2)*absc+p(3); ## Equation de perm en fct de T
+er_var = p(1).*T.**2+p(2)*T+p(3); ## Expression de la permittivité variable de l'eau en fonction de la température
 
-er_var = p(1).*T.**2+p(2)*T+p(3); ##Expression de la perm variable de l'eau en fonction de la température
-txt2 = num2str(er_var);
-txt1 = num2str(T);
 
+## Tracé des courbes
 
 figure 1 
 
 plot(Temp,perm,Temp,f,T,er_var,'o')
 
 title("Evolution de la permittivité relative de l'eau en fonction de la température");
-legend("e_r","Approximation 2nd dgré","Température sélectionnée");
+legend("e_r","Approximation 2nd degré","Température sélectionnée");
 text(T+2,er_var,'T choisie','Color','red','FontSize',14) ;
 xlabel("Température en °C");
 ylabel("Permittivité Relative de l'eau");
 
 
-## Simulation du circuit
+########################## SIMULATION DU CIRCUIT ###############################
 
 Vin = 3; ## [V] en AC
 C1 = 1e-9; ## [nF]Capacité fixe de 1nF pour le pont diviseur capacitif
 
-Cmin = (e0*er_air*A/d)/1e-9;##Capacité quand le réservoir est 'vide'
-Cmax = (e0*er_var*A/d)/1e-9;##Capacité quand le réservoir est plein
+Cmin = (e0*er_air*A/d)/1e-9; ##Capacité quand le réservoir est 'vide'
+Cmax = (e0*er_var*A/d)/1e-9; ##Capacité quand le réservoir est plein d'eau
 
 disp('La capacité du condensateur va varier entre : '),disp(Cmin),disp('nanoFarad et'),disp(Cmax),disp('nanoFarad')
+disp("car la permittivité de l'eau vaut : "),disp(er_var)
 
 
 ##Paramètres extraits du circuit
 
-Vout = input('Valeur de Vout en sortie du circuit : ');
+Vout = input('Valeur de Vout en sortie du circuit (en Volts): '); ## Entrer la valeur mesurée de Vout dans le pont diviseur capacitif
+
 C= ((Vin*C1)/Vout)-C1 ;## D'après le pont diviseur de tension avec 2 condensateur
-x = (C*d-er_air*e0*A)/(e0*l*(er_var-er_air)); ## Distance immergée des électrodes
-Level = x + x_min;## Niveau de liquide dans la cuve
-disp("Le niveau d'eau dans la cuve est de :  "),disp(Level),disp('mètres')
+
+x = (C*d-er_air*e0*A)/(e0*l*(er_var-er_air)); ## Hauteur immergée des électrodes
+
+Level = (x + x_min)/1e-2;## Niveau de liquide dans la cuve en centimètres
+
+disp("Le niveau d'eau dans la cuve est de :  "),disp(Level),disp('centimètres')
