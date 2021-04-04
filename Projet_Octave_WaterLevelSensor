@@ -10,12 +10,12 @@ pkg load statistics
 ###################### PARAMETRES DU CONDENSATEUR PLAN ######################### 
 
 e0=8.854187e-12; ##[F.m-1]
-er_air= 1.0005;## air sec à 20 degrés Celsius
+er_air= 1.0006;## air sec à 20 degrés Celsius
 
-h=20e-2;## hauteur de la plaque en [m]
+h=40e-2;## hauteur de la plaque en [m]
 l=4e-2;## longueur de la plaque en [m]
 A=h*l; ##Surface d'une plaque en [m2]
-d=0.5e-2;## Distance entre les deux électrodes en [m]
+d=1e-3;## Distance entre les deux électrodes en [m]
 
 x_min = 10e-2; #Hauteur de l'eau dans la cuve quand le condensateur est plein d'air
 
@@ -51,12 +51,12 @@ ylabel("Permittivité Relative de l'eau");
 ########################## SIMULATION DU CIRCUIT ###############################
 
 Vin = 3; ## [V] en AC
-C1 = 1e-9; ## [nF]Capacité fixe de 1nF pour le pont diviseur capacitif
+Ctest = 1e-9; ## [nF]Capacité fixe test de 1nF pour le pont diviseur capacitif
 
-Cmin = (e0*er_air*A/d)/1e-9; ##Capacité quand le réservoir est 'vide'
+C_0 = (e0*er_air*A/d)/1e-9; ##Capacité quand le réservoir est 'vide'
 Cmax = (e0*er_var*A/d)/1e-9; ##Capacité quand le réservoir est plein d'eau
 
-disp('La capacité du condensateur va varier entre : '),disp(Cmin),disp('nanoFarad et'),disp(Cmax),disp('nanoFarad')
+disp('La capacité du condensateur va varier entre : '),disp(C_0),disp('nanoFarads et'),disp(Cmax),disp('nanoFarads')
 disp("car la permittivité de l'eau vaut : "),disp(er_var)
 
 
@@ -64,10 +64,29 @@ disp("car la permittivité de l'eau vaut : "),disp(er_var)
 
 Vout = input('Valeur de Vout en sortie du circuit (en Volts): '); ## Entrer la valeur mesurée de Vout dans le pont diviseur capacitif
 
-C= ((Vin*C1)/Vout)-C1 ;## D'après le pont diviseur de tension avec 2 condensateur
+C =((Vin*Ctest)/Vout)- Ctest ;## D'après le pont diviseur de tension avec 2 condensateur
 
 x = (C*d-er_air*e0*A)/(e0*l*(er_var-er_air)); ## Hauteur immergée des électrodes
 
 Level = (x + x_min)/1e-2;## Niveau de liquide dans la cuve en centimètres
 
-disp("Le niveau d'eau dans la cuve est de :  "),disp(Level),disp('centimètres')
+disp("Le niveau d'eau dans la cuve est de :  "),disp(Level),disp('centimètres'),
+disp("car la capacité mesurée est de : "),disp(C/1e-9),disp('nanoFarads')
+
+############################# COURBE THEORIQUE #################################
+
+
+C_1 = (e0*(l/d)*(er_var-er_air))/(1e-9); 
+a = [0 h*1e2]; ## Hauteur des électrodes
+b = C_1*(a*1e-2) + C_0; ## Expression linéaire de C(x)
+
+
+
+figure 2
+
+plot(a,b)
+
+title("Capacité du condensateur en fonction du niveau d'eau entre les électrodes à 20°C");
+legend("C(x) = 28.028 x + 0.142",'Location','northwest');
+xlabel("Hauteur immergée des électrodes (en cm)");
+ylabel("Capacité du condensateur (en nF)");
