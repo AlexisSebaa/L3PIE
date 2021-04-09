@@ -50,7 +50,7 @@ ylabel("Permittivité Relative de l'eau");
 
 ########################## SIMULATION DU CIRCUIT ###############################
 
-Vin = 3; ## [V] en AC
+Vin = 5; ## [V] en DC
 Ctest = 1e-9; ## [nF]Capacité fixe test de 1nF pour le pont diviseur capacitif
 
 C_0 = (e0*er_air*A/d)/1e-9; ##Capacité quand le réservoir est 'vide'
