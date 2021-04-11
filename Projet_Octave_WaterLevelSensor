@@ -44,7 +44,7 @@ figure 1
 plot(Temp,perm,Temp,f,T,er_var,'o',[0 100], [er_var er_var],'k',[T T], [55 90],'k')
 
 title("Evolution de la permittivité relative de l'eau en fonction de la température");
-legend("e_r","Approximation 2nd degré","Température sélectionnée");
+legend("e_r (t) théorique","e_r (t) avec approximation du 2nd degré","Température sélectionnée");
 text(T+2,er_var+2,'T choisie','Color','red','FontSize',14) ;
 xlabel("Température en °C");
 ylabel("Permittivité Relative de l'eau");
