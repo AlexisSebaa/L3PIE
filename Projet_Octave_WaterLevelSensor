@@ -21,7 +21,7 @@ x_min = 10e-2; #Hauteur de l'eau dans la cuve quand le condensateur est plein d'
 
 ############# INFLUENCE DE LA TEMPÉRATURE SUR LA PERMITTIVITÉ ##################
 
-T = input("Température de l'eau : "); ##Entrer la température ambiante en degré Celsius
+T = input("Température de l'eau en °C = "); ##Entrer la température ambiante en degré Celsius
 
 ## Données expérimentales
 
@@ -41,7 +41,7 @@ Cmax = (e0*er_var*A/d)/1e-9; ##Capacité quand le réservoir est plein d'eau
 
 figure 1 
 
-plot(Temp,perm,Temp,f,T,er_var,'o')
+plot(Temp,perm,Temp,f,T,er_var,'o',[0 100], [er_var er_var],'-',[T T], [55 90],'-')
 
 title("Evolution de la permittivité relative de l'eau en fonction de la température");
 legend("e_r","Approximation 2nd degré","Température sélectionnée");
@@ -54,7 +54,6 @@ ylabel("Permittivité Relative de l'eau");
 ##### CHOIX DU CIRCUIT 
 
 choix = input("Choix de la méthode de résolution, entrez 1 pour le Pont diviseur Capacitif, 2 pour le circuit RC : ");
-
 
 
 #### PONT DIVISEUR CAPACITIF
@@ -82,7 +81,27 @@ if choix == 1
   disp("Le niveau d'eau dans la cuve est de :  "),disp(Level),disp('centimètres'),
   disp("car la capacité mesurée est de : "),disp(C/1e-9),disp('nanoFarads')
   
+    ############################# COURBE THEORIQUE POUR T #################################
+
+
+  C_1 = (e0*(l/d)*(er_var-er_air))/(1e-9); 
+  a = [0 h*1e2]; ## Hauteur des électrodes
+  b = C_1*(a*1e-2) + C_0; ## Expression linéaire de C(x)
+
+
+
+  figure 3
+
+  plot(a,b,[0 h*1e2], [C*1e9 C*1e9],[(Level-(x_min*1e2)) (Level-(x_min*1e2))], [0 14],(Level-(x_min*1e2)),C*1e9,'o')
+
+  title("Capacité du condensateur en fonction du niveau d'eau entre les électrodes à T choisie en °C");
+  legend("C(x) = C1 x + C0",'Location','northwest');
+  xlabel("Hauteur immergée des électrodes (en cm)");
+  ylabel("Capacité du condensateur (en nF)");
+  
 endif
+
+
 
 
 
@@ -92,7 +111,7 @@ if choix ==2
   E = 5; ## Tension directe de 5 Volts
   R = 400e6; ## Résistance en Ohms
 
-  x_inc = (rand(1)*40e-2)+x_min; ## Niveau d'eau inconnu dans la cuve de 50cm de haut
+  x_inc = (rand(1)*h); ## Niveau d'eau inconnu entre les electrodes de 40cm de haut
   C_inc = e0*l/d * (er_var*x_inc + (h-x_inc)*er_air);## Capacité inconnue liée au niveau d'eau; 
 
   t = [0:0.01:10] ; ## Plage de temps de 0 à 100 secondes
@@ -102,7 +121,7 @@ if choix ==2
   Vc_tau = 0.632*E; ##Valeur théorique pour laquelle t = tau soit 3.16 V ici
 
   i=1; ## Boucle de recherche de la valeur tau sur l'échelle des temps t
-  while (Vc(i)<Vc_tau) 
+  while (Vc(i)<Vc_tau) ## Arrondi à la valeur supérieure pour éviter un débordement
     i+=1; 
   endwhile
  
@@ -113,12 +132,13 @@ if choix ==2
 
   disp("L'erreur relative entre la capacité réelle et la capacité calculée est de : "),disp(err_rel), disp("%")
   
-  x_calc = (C_calc*d-er_air*e0*A)/(e0*l*(er_var-er_air)); ## Hauteur immergée des électrodes
-  x_th = (x_inc+x_min)/1e-2;
-  disp("La hauteur calculée du niveau dans la cuve est donc de : "), disp((x_calc+x_min)/1e-2), disp(" cm")
-  disp("La hauteur théorique étant de : "),disp(x_th),disp(" cm")
+  niv_calc = ((C_calc*d-er_air*e0*A)/(e0*l*(er_var-er_air)) + x_min)/1e-2; ## Hauteur du niveau d'eau dans la cuve en cm
+  niv_th = (x_inc+x_min)/1e-2; ## Hauteur théorique en cm
   
-  err_niv = (abs(x_inc-x_calc)/x_inc)*100;
+  disp("La hauteur calculée du niveau dans la cuve est donc de : "), disp(niv_calc), disp(" cm")
+  disp("La hauteur théorique étant de : "),disp(niv_th),disp(" cm")
+  
+  err_niv = (abs(niv_th-niv_calc)/niv_th)*100;
   disp("On a donc une erreur relative sur la mesure du niveau de : "),disp(err_niv), disp("%")
   
   
@@ -130,30 +150,23 @@ if choix ==2
   text(tau+0.5,Vc_tau -0.5,'Valeur de Tau','Color','blue','FontSize',14) ;
   xlabel("Temps (en secondes)");
   ylabel("Tension aux bornes du condensateur (en Volts)");
+  
+  
+  ############################# COURBE THEORIQUE POUR T #################################
+
+
+  C_1 = (e0*(l/d)*(er_var-er_air))/(1e-9); 
+  a = [0 h*1e2]; ## Hauteur des électrodes
+  b = C_1*(a*1e-2) + C_0; ## Expression linéaire de C(x)
+
+
+
+  figure 3
+
+  plot(a,b,[0 h*1e2], [C_calc*1e9 C_calc*1e9],[(niv_calc-(x_min*1e2)) (niv_calc-(x_min*1e2))], [0 14])
+
+  title("Capacité du condensateur en fonction du niveau d'eau entre les électrodes à T choisie en °C");
+  legend("C(x) = C1 x + C0",'Location','northwest');
+  xlabel("Hauteur immergée des électrodes (en cm)");
+  ylabel("Capacité du condensateur (en nF)");
 endif
-
-
-
-
-
-
-############################# COURBE THEORIQUE A 20 C #################################
-
-
-C_1 = (e0*(l/d)*(er_var-er_air))/(1e-9); 
-a = [0 h*1e2]; ## Hauteur des électrodes
-b = C_1*(a*1e-2) + C_0; ## Expression linéaire de C(x)
-
-
-
-figure 3
-
-plot(a,b)
-
-title("Capacité du condensateur en fonction du niveau d'eau entre les électrodes à T choisie en °C");
-legend("C(x) = C1 x + C0",'Location','northwest');
-xlabel("Hauteur immergée des électrodes (en cm)");
-ylabel("Capacité du condensateur (en nF)");
-
-
-
