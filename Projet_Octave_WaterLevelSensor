@@ -60,7 +60,7 @@ choix = input("Choix de la méthode de résolution, entrez 1 pour le Pont divise
 if choix == 1
 
   Vin = 5; ## [V] en DC
-  Ctest = 1e-9; ## [nF]Capacité fixe de 1nF pour le pont diviseur capacitif
+  Cext = 1e-9; ## [nF]Capacité fixe de 1nF pour le pont diviseur capacitif
   ##(R_pdc = 100; ##Résistance pour le Pont Diviseur Capacitif)
 
 
@@ -72,7 +72,7 @@ if choix == 1
 
   Vout = input('Valeur de Vout en sortie du circuit (en Volts): '); ## Entrer la valeur mesurée de Vout dans le pont diviseur capacitif
 
-  C =((Vin*Ctest)/Vout)- Ctest ;## D'après le pont diviseur de tension avec 2 condensateur
+  C =((Vin*Cext)/Vout)- Cext ;## D'après le pont diviseur de tension avec 2 condensateur
 
   x = (C*d-er_air*e0*A)/(e0*l*(er_var-er_air)); ## Hauteur immergée des électrodes
 
