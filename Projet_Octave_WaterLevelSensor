@@ -41,7 +41,7 @@ Cmax = (e0*er_var*A/d)/1e-9; ##Capacité quand le réservoir est plein d'eau
 
 figure 1 
 
-plot(Temp,perm,Temp,f,T,er_var,'o',[0 100], [er_var er_var],'-',[T T], [55 90],'-')
+plot(Temp,perm,Temp,f,T,er_var,'o',[0 100], [er_var er_var],'k',[T T], [55 90],'k')
 
 title("Evolution de la permittivité relative de l'eau en fonction de la température");
 legend("e_r","Approximation 2nd degré","Température sélectionnée");
@@ -93,7 +93,7 @@ if choix == 1
 
   figure 3
 
-  plot(a1,[C_0 C_0],a2,b2,[0 (h+x_min)*1e2], [C*1e9 C*1e9],[Level Level], [0 14],Level,C*1e9,'o')
+  plot(a1,[C_0 C_0],a2,b2,[0 (h+x_min)*1e2], [C*1e9 C*1e9],'k',[Level Level], [0 14],'k',Level,C*1e9,'o')
 
   title("Capacité du condensateur en fonction du niveau d'eau dans la cuve à T choisie en °C");
   legend("C(x) = C1 x + C0",'Location','northwest');
@@ -165,7 +165,7 @@ if choix ==2
 
   figure 3
 
-  plot(a1,[C_0 C_0],a2,b2,[0 (h+x_min)*1e2], [C_calc*1e9 C_calc*1e9],[niv_calc niv_calc], [0 14])
+  plot(a1,[C_0 C_0],a2,b2,[0 (h+x_min)*1e2], [C_calc*1e9 C_calc*1e9],'k',[niv_calc niv_calc], [0 14],'k',niv_calc,C_calc*1e9,'o')
 
   title("Capacité du condensateur en fonction du niveau d'eau dans la cuve à T choisie en °C");
   legend("C = xmin : niveau inférieur aux électrodes","C(x-xmin) = C1 (x-xmin) + C0",'Location','northwest');
