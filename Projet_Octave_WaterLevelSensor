@@ -45,7 +45,7 @@ plot(Temp,perm,Temp,f,T,er_var,'o',[0 100], [er_var er_var],'-',[T T], [55 90],'
 
 title("Evolution de la permittivité relative de l'eau en fonction de la température");
 legend("e_r","Approximation 2nd degré","Température sélectionnée");
-text(T+2,er_var,'T choisie','Color','red','FontSize',14) ;
+text(T+2,er_var+2,'T choisie','Color','red','FontSize',14) ;
 xlabel("Température en °C");
 ylabel("Permittivité Relative de l'eau");
 
@@ -85,16 +85,17 @@ if choix == 1
 
 
   C_1 = (e0*(l/d)*(er_var-er_air))/(1e-9); 
-  a = [0 h*1e2]; ## Hauteur des électrodes
-  b = C_1*(a*1e-2) + C_0; ## Expression linéaire de C(x)
+  a1 = [0 x_min*1e2];
+  a2 = [x_min*1e2 h*1e2];
+  b2 = C_1*(a2*1e-2-x_min) + C_0; ## Expression linéaire de C(x)
 
 
 
   figure 3
 
-  plot(a,b,[0 h*1e2], [C*1e9 C*1e9],[(Level-(x_min*1e2)) (Level-(x_min*1e2))], [0 14],(Level-(x_min*1e2)),C*1e9,'o')
+  plot(a1,[C_0 C_0],a2,b2,[0 h*1e2], [C*1e9 C*1e9],[Level Level], [0 14],Level,C*1e9,'o')
 
-  title("Capacité du condensateur en fonction du niveau d'eau entre les électrodes à T choisie en °C");
+  title("Capacité du condensateur en fonction du niveau d'eau dans la cuve à T choisie en °C");
   legend("C(x) = C1 x + C0",'Location','northwest');
   xlabel("Hauteur immergée des électrodes (en cm)");
   ylabel("Capacité du condensateur (en nF)");
@@ -156,17 +157,18 @@ if choix ==2
 
 
   C_1 = (e0*(l/d)*(er_var-er_air))/(1e-9); 
-  a = [0 h*1e2]; ## Hauteur des électrodes
-  b = C_1*(a*1e-2) + C_0; ## Expression linéaire de C(x)
+  a1 = [0 x_min*1e2];
+  a2 = [x_min*1e2 h*1e2+x_min*1e2];
+  b2 = C_1*(a2*1e-2-x_min) + C_0; ## Expression linéaire de C(x)
 
 
 
   figure 3
 
-  plot(a,b,[0 h*1e2], [C_calc*1e9 C_calc*1e9],[(niv_calc-(x_min*1e2)) (niv_calc-(x_min*1e2))], [0 14])
+  plot(a1,[C_0 C_0],a2,b2,[0 (h+x_min)*1e2], [C_calc*1e9 C_calc*1e9],[niv_calc niv_calc], [0 14])
 
-  title("Capacité du condensateur en fonction du niveau d'eau entre les électrodes à T choisie en °C");
-  legend("C(x) = C1 x + C0",'Location','northwest');
-  xlabel("Hauteur immergée des électrodes (en cm)");
+  title("Capacité du condensateur en fonction du niveau d'eau dans la cuve à T choisie en °C");
+  legend("C = xmin : niveau inférieur aux électrodes","C(x-xmin) = C1 (x-xmin) + C0",'Location','northwest');
+  xlabel("Hauteur de l'eau dans la cuve (en cm)");
   ylabel("Capacité du condensateur (en nF)");
 endif
