@@ -86,14 +86,14 @@ if choix == 1
 
   C_1 = (e0*(l/d)*(er_var-er_air))/(1e-9); 
   a1 = [0 x_min*1e2];
-  a2 = [x_min*1e2 h*1e2];
+  a2 = [x_min*1e2 h*1e2+x_min*1e2];
   b2 = C_1*(a2*1e-2-x_min) + C_0; ## Expression linéaire de C(x)
 
 
 
   figure 3
 
-  plot(a1,[C_0 C_0],a2,b2,[0 h*1e2], [C*1e9 C*1e9],[Level Level], [0 14],Level,C*1e9,'o')
+  plot(a1,[C_0 C_0],a2,b2,[0 (h+x_min)*1e2], [C*1e9 C*1e9],[Level Level], [0 14],Level,C*1e9,'o')
 
   title("Capacité du condensateur en fonction du niveau d'eau dans la cuve à T choisie en °C");
   legend("C(x) = C1 x + C0",'Location','northwest');
@@ -172,3 +172,12 @@ if choix ==2
   xlabel("Hauteur de l'eau dans la cuve (en cm)");
   ylabel("Capacité du condensateur (en nF)");
 endif
+
+
+
+
+
+
+
+
+
