@@ -53,71 +53,91 @@ ylabel("Permittivité Relative de l'eau");
 
 ##### CHOIX DU CIRCUIT 
 
+choix = input("Choix de la méthode de résolution, entrez 1 pour le Pont diviseur Capacitif, 2 pour le circuit RC : ");
 
 
-##Paramètres extraits du circuit Pont diviseur Capacitif
 
-Vin = 5; ## [V] en DC
-Ctest = 1e-9; ## [nF]Capacité fixe de 1nF pour le pont diviseur capacitif
-##(R_pdc = 100; ##Résistance pour le Pont Diviseur Capacitif)
+#### PONT DIVISEUR CAPACITIF
+if choix == 1
 
-
-disp('La capacité du condensateur va varier entre : '),disp(C_0),disp('nanoFarads et'),disp(Cmax),disp('nanoFarads')
-disp("car la permittivité de l'eau vaut : "),disp(er_var)
-##Affichage de la plage de valeurs de C
-
-##Calcul du niveau d'eau pour le pont diviseur capacitif
-
-Vout = input('Valeur de Vout en sortie du circuit (en Volts): '); ## Entrer la valeur mesurée de Vout dans le pont diviseur capacitif
-
-C =((Vin*Ctest)/Vout)- Ctest ;## D'après le pont diviseur de tension avec 2 condensateur
-
-x = (C*d-er_air*e0*A)/(e0*l*(er_var-er_air)); ## Hauteur immergée des électrodes
-
-Level = (x + x_min)/1e-2;## Niveau de liquide dans la cuve en centimètres
-
-disp("Le niveau d'eau dans la cuve est de :  "),disp(Level),disp('centimètres'),
-disp("car la capacité mesurée est de : "),disp(C/1e-9),disp('nanoFarads')
+  Vin = 5; ## [V] en DC
+  Ctest = 1e-9; ## [nF]Capacité fixe de 1nF pour le pont diviseur capacitif
+  ##(R_pdc = 100; ##Résistance pour le Pont Diviseur Capacitif)
 
 
-############################## CIRCUIT RC ######################################
+  disp('La capacité du condensateur va varier entre : '),disp(C_0),disp('nanoFarads et'),disp(Cmax),disp('nanoFarads')
+  disp("car la permittivité de l'eau vaut : "),disp(er_var)
+  ##Affichage de la plage de valeurs de C
 
-E = Vin; ## Tension directe de 5 Volts
-R = 400e6; ## Résistance en Ohms
+  ##Calcul du niveau d'eau pour le pont diviseur capacitif
 
-x_inc = (rand(1)*40e-2)+x_min; ## Niveau d'eau inconnu dans la cuve de 50cm de haut
-C_inc = e0*l/d * (er_var*x_inc + (h-x_inc)*er_air);## Capacité inconnue liée au niveau d'eau; 
+  Vout = input('Valeur de Vout en sortie du circuit (en Volts): '); ## Entrer la valeur mesurée de Vout dans le pont diviseur capacitif
 
-t = [0:0.01:10] ; ## Plage de temps de 0 à 100 secondes
+  C =((Vin*Ctest)/Vout)- Ctest ;## D'après le pont diviseur de tension avec 2 condensateur
 
-Vc = E*(1-exp(-t/(R*C_inc))); ## Vc(t) en phase de charge
+  x = (C*d-er_air*e0*A)/(e0*l*(er_var-er_air)); ## Hauteur immergée des électrodes
 
-Vc_tau = 0.632*E; ##Valeur théorique pour laquelle t = tau soit 3.16 V ici
+  Level = (x + x_min)/1e-2;## Niveau de liquide dans la cuve en centimètres
 
-i=1; ## Boucle de recherche de la valeur tau sur l'échelle des temps t
-while (Vc(i)<Vc_tau) 
-  i+=1; 
-endwhile
+  disp("Le niveau d'eau dans la cuve est de :  "),disp(Level),disp('centimètres'),
+  disp("car la capacité mesurée est de : "),disp(C/1e-9),disp('nanoFarads')
+  
+endif
+
+
+
+
+#### CIRCUIT RC 
+if choix ==2
+  E = 5; ## Tension directe de 5 Volts
+  R = 400e6; ## Résistance en Ohms
+
+  x_inc = (rand(1)*40e-2)+x_min; ## Niveau d'eau inconnu dans la cuve de 50cm de haut
+  C_inc = e0*l/d * (er_var*x_inc + (h-x_inc)*er_air);## Capacité inconnue liée au niveau d'eau; 
+
+  t = [0:0.01:10] ; ## Plage de temps de 0 à 100 secondes
+
+  Vc = E*(1-exp(-t/(R*C_inc))); ## Vc(t) en phase de charge
+
+  Vc_tau = 0.632*E; ##Valeur théorique pour laquelle t = tau soit 3.16 V ici
+
+  i=1; ## Boucle de recherche de la valeur tau sur l'échelle des temps t
+  while (Vc(i)<Vc_tau) 
+    i+=1; 
+  endwhile
  
-tau = i*0.01 - 0.01; #Calcul de la valeur de tau en fonction du pas de calcul
+  tau = i*0.01 - 0.01; #Calcul de la valeur de tau en fonction du pas de calcul
 
-C_calc = tau/R; ##Calcul de C expérimental avec tau
-err_rel = (abs(C_inc - C_calc)/C_inc)*100; ## Calcul de l'erreur sur la mesure (due à l'intervalle de temps)
+  C_calc = tau/R; ##Calcul de C expérimental avec tau
+  err_rel = (abs(C_inc - C_calc)/C_inc)*100; ## Calcul de l'erreur sur la mesure (due à l'intervalle de temps)
 
-disp("L'erreur relative entre la capacité réelle et la capacité calculée est de : "),disp(err_rel), disp("%")
+  disp("L'erreur relative entre la capacité réelle et la capacité calculée est de : "),disp(err_rel), disp("%")
+  
+  x_calc = (C_calc*d-er_air*e0*A)/(e0*l*(er_var-er_air)); ## Hauteur immergée des électrodes
+  x_th = (x_inc+x_min)/1e-2;
+  disp("La hauteur calculée du niveau dans la cuve est donc de : "), disp((x_calc+x_min)/1e-2), disp(" cm")
+  disp("La hauteur théorique étant de : "),disp(x_th),disp(" cm")
+  
+  err_niv = (abs(x_inc-x_calc)/x_inc)*100;
+  disp("On a donc une erreur relative sur la mesure du niveau de : "),disp(err_niv), disp("%")
+  
+  
+  figure 2
 
-figure 2
-
-plot(t,Vc,[0 10], [Vc_tau Vc_tau],[tau tau], [0 5],tau,Vc_tau,'o')
-title("Evolution temporelle de la tension aux bornes du condensateur en charge");
-legend("Vc(t) = E (1-exp(-t/RC))","Vc(tau) = 63.2 %","Tau : temps caractéritique");
-text(tau+0.5,Vc_tau -0.5,'Valeur de Tau','Color','blue','FontSize',14) ;
-xlabel("Temps (en secondes)");
-ylabel("Tension aux bornes du condensateur (en Volts)");
-
+  plot(t,Vc,[0 10], [Vc_tau Vc_tau],[tau tau], [0 5],tau,Vc_tau,'o')
+  title("Evolution temporelle de la tension aux bornes du condensateur en charge");
+  legend("Vc(t) = E (1-exp(-t/RC))","Vc(tau) = 63.2 %","Tau : temps caractéritique",'Location','southeast');
+  text(tau+0.5,Vc_tau -0.5,'Valeur de Tau','Color','blue','FontSize',14) ;
+  xlabel("Temps (en secondes)");
+  ylabel("Tension aux bornes du condensateur (en Volts)");
+endif
 
 
-############################# COURBE THEORIQUE #################################
+
+
+
+
+############################# COURBE THEORIQUE A 20 C #################################
 
 
 C_1 = (e0*(l/d)*(er_var-er_air))/(1e-9); 
@@ -130,8 +150,8 @@ figure 3
 
 plot(a,b)
 
-title("Capacité du condensateur en fonction du niveau d'eau entre les électrodes à 20°C");
-legend("C(x) = 28.028 x + 0.142",'Location','northwest');
+title("Capacité du condensateur en fonction du niveau d'eau entre les électrodes à T choisie en °C");
+legend("C(x) = C1 x + C0",'Location','northwest');
 xlabel("Hauteur immergée des électrodes (en cm)");
 ylabel("Capacité du condensateur (en nF)");
 
