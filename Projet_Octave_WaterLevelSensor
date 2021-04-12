@@ -116,7 +116,9 @@ if choix ==2
   C_inc = e0*l/d * (er_var*x_inc + (h-x_inc)*er_air);## Capacité inconnue liée au niveau d'eau; 
 
   t = [0:0.01:10] ; ## Plage de temps de 0 à 100 secondes
-
+  
+  #### PHASE DE CHARGE
+  
   Vc = E*(1-exp(-t/(R*C_inc))); ## Vc(t) en phase de charge
 
   Vc_tau = 0.632*E; ##Valeur théorique pour laquelle t = tau soit 3.16 V ici
@@ -131,12 +133,12 @@ if choix ==2
   C_calc = tau/R; ##Calcul de C expérimental avec tau
   err_rel = (abs(C_inc - C_calc)/C_inc)*100; ## Calcul de l'erreur sur la mesure (due à l'intervalle de temps)
 
-  disp("L'erreur relative entre la capacité réelle et la capacité calculée est de : "),disp(err_rel), disp("%")
+  disp("L'erreur relative entre la capacité réelle et la capacité calculée en phase de charge est de : "),disp(err_rel), disp("%")
   
   niv_calc = ((C_calc*d-er_air*e0*A)/(e0*l*(er_var-er_air)) + x_min)/1e-2; ## Hauteur du niveau d'eau dans la cuve en cm
   niv_th = (x_inc+x_min)/1e-2; ## Hauteur théorique en cm
   
-  disp("La hauteur calculée du niveau dans la cuve est donc de : "), disp(niv_calc), disp(" cm")
+  disp("La hauteur calculée du niveau dans la cuve en phase de charge est donc de : "), disp(niv_calc), disp(" cm")
   disp("La hauteur théorique étant de : "),disp(niv_th),disp(" cm")
   
   err_niv = (abs(niv_th-niv_calc)/niv_th)*100;
@@ -147,11 +149,47 @@ if choix ==2
 
   plot(t,Vc,[0 10], [Vc_tau Vc_tau],[tau tau], [0 5],tau,Vc_tau,'o')
   title("Evolution temporelle de la tension aux bornes du condensateur en charge");
-  legend("Vc(t) = E (1-exp(-t/RC))","Vc(tau) = 63.2 %","Tau : temps caractéritique",'Location','southeast');
+  legend("Vc(t) = E (1-exp(-t/RC))","Vc(tau) = 63.2 % × E","Tau : temps caractéritique",'Location','southeast');
   text(tau+0.5,Vc_tau -0.5,'Valeur de Tau','Color','blue','FontSize',14) ;
   xlabel("Temps (en secondes)");
   ylabel("Tension aux bornes du condensateur (en Volts)");
   
+  #### PHASE DE DECHARGE
+  
+  
+  Vd = E*exp(-t/(R*C_inc)); ## Vd(t) en phase de décharge
+
+  Vd_tau = 0.368*E; ##Valeur théorique pour laquelle t = tau en décharge
+
+  j=1; ## Boucle de recherche de la valeur tau sur l'échelle des temps t
+  while (Vd(j)>Vd_tau) ## Arrondi à la valeur supérieure pour éviter un débordement
+    j+=1; 
+  endwhile
+ 
+  tau2 = j*0.01 - 0.01; #Calcul de la valeur de tau en fonction du pas de calcul
+
+  C_calc2 = tau2/R; ##Calcul de C expérimental avec tau
+  err_rel2 = (abs(C_inc - C_calc2)/C_inc)*100; ## Calcul de l'erreur sur la mesure (due à l'intervalle de temps)
+
+  disp("L'erreur relative entre la capacité réelle et la capacité calculée en phase de décharge est de : "),disp(err_rel2), disp("%")
+  
+  niv_calc2 = ((C_calc2*d-er_air*e0*A)/(e0*l*(er_var-er_air)) + x_min)/1e-2; ## Hauteur du niveau d'eau dans la cuve en cm
+  
+  disp("La hauteur calculée du niveau dans la cuve en phase de décharge est donc de : "), disp(niv_calc2), disp(" cm")
+  disp("La hauteur théorique étant de : "),disp(niv_th),disp(" cm")
+  
+  err_niv2 = (abs(niv_th-niv_calc2)/niv_th)*100;
+  disp("On a donc une erreur relative sur la mesure du niveau de : "),disp(err_niv2), disp("%")
+  
+  
+  figure 3
+
+  plot(t,Vd,[0 10], [Vd_tau Vd_tau],[tau2 tau2], [0 5],tau2,Vd_tau,'o')
+  title("Evolution temporelle de la tension aux bornes du condensateur en décharge");
+  legend("Vd(t) = E exp(-t/RC)","Vd(tau) = 36.8 % × E","Tau : temps caractéritique",'Location','southeast');
+  text(tau2+0.5,Vd_tau -0.5,'Valeur de Tau','Color','blue','FontSize',14) ;
+  xlabel("Temps (en secondes)");
+  ylabel("Tension aux bornes du condensateur (en Volts)");
   
   ############################# COURBE THEORIQUE POUR T #################################
 
@@ -163,7 +201,7 @@ if choix ==2
 
 
 
-  figure 3
+  figure 4
 
   plot(a1,[C_0 C_0],a2,b2,[0 (h+x_min)*1e2], [C_calc*1e9 C_calc*1e9],'k',[niv_calc niv_calc], [0 14],'k',niv_calc,C_calc*1e9,'o')
 
