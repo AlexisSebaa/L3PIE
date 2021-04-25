@@ -1,0 +1,26 @@
+### Modele du gaz de Van der Waals ###
+
+V = 0.2e-6: 0.01e-6 : 1.5e-6; ##m3
+
+R = 8.314; ##uSI
+n = 2.18e-3; ##mol
+T = 20.2+273.15 ; ##K
+Tc = 45.6+273.15 ;##K 
+pc = 3.78e7; ##Pa
+
+a = (27*R^2*Tc^2)/(8*pc); ##uSI
+b = (R^2*Tc)/(8*pc); ##uSI
+
+
+p = ((n*R*T)./(V-n*b)) - ((a*n^2)./V.^2);
+
+p2 = ((n*R*Tc)./(V-n*b)) - ((a*n^2)./V.^2);
+
+
+
+plot(V,p,V,p2)##,[0 1.5e-6],[3.6e6 3.6e6],'k')
+title("Isotherme de Van der Waals pour T = T1");
+xlabel("Volume (en m3)");
+ylabel("Pression (en Pa)");
+legend("T1 = 20.2°C", "T = Tc"); 
+##text(0,6.5e6,'p_{sat}','Color','black','FontSize',14) ;
